@@ -17,7 +17,10 @@
 <a href="#trade">Trade</a>
 <a href="#launchpad">Launchpad</a>
 </nav>
-<button class="bg-blue-600 text-white px-4 py-2 rounded-xl">Connect Wallet</button>
+<button id="connectBtn" class="bg-blue-600 text-white px-4 py-2 rounded-xl">
+  Connect Wallet
+</button>
+<span id="walletAddress" class="ml-4 text-xs text-slate-500"></span>
 </div>
 </header>
 <section class="max-w-7xl mx-auto px-6 py-24 text-center">
@@ -54,5 +57,27 @@
 <p>Launch fractionalized premium domains to the community.</p>
 </section>
 <footer class="text-center py-8 text-sm text-slate-500">© 2025 Domafi.xyz – DomainFi Bank</footer>
+<script>
+async function connectWallet() {
+  if (window.ethereum) {
+    const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+    const addr = accounts[0];
+    document.getElementById("walletAddress").innerText =
+      addr.slice(0, 6) + "..." + addr.slice(-4);
+    document.getElementById("connectBtn").innerText = "Connected";
+  } 
+  else if (window.solana) {
+    const resp = await window.solana.connect();
+    document.getElementById("walletAddress").innerText =
+      resp.publicKey.toString().slice(0, 6) + "...";
+    document.getElementById("connectBtn").innerText = "Connected";
+  } 
+  else {
+    alert("Install Metamask or Phantom Wallet");
+  }
+}
+
+document.getElementById("connectBtn").onclick = connectWallet;
+</script>
 </body>
 </html>
