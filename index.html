@@ -25,11 +25,14 @@
 Connect Wallet
 </button>
 
-<button id="disconnectBtn" class="hidden bg-red-500 text-white px-4 py-2 rounded-xl ml-2">
+<button id="disconnectBtn"
+ style="display:none"
+ class="bg-red-500 text-white px-4 py-2 rounded-xl ml-2">
 Disconnect
 </button>
 
 <span id="walletAddress" class="ml-3 text-xs text-slate-500"></span>
+
 
 </div>
 </header>
@@ -86,20 +89,19 @@ Disconnect
 <script src="https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 
 <script>
-document.addEventListener("DOMContentLoaded", async function () {
+document.addEventListener("DOMContentLoaded", function () {
 
   const connectBtn = document.getElementById("connectBtn");
   const disconnectBtn = document.getElementById("disconnectBtn");
   const addr = document.getElementById("walletAddress");
   const list = document.getElementById("domainList");
 
-  let currentAccount = localStorage.getItem("connectedWallet");
-
-  function setConnectedUI(account){
+  function setConnected(account){
+    connectBtn.style.display = "none";
+    disconnectBtn.style.display = "inline-block";
     connectBtn.innerText = "Connected";
-    connectBtn.classList.add("hidden");
-    disconnectBtn.classList.remove("hidden");
-    addr.innerText = account.slice(0,6) + "..." + account.slice(-4);
+    addr.innerText = account.slice(0,6)+"..."+account.slice(-4);
+
     list.innerHTML = `
       <div class="bg-white p-4 rounded-xl shadow">
         <b>Wallet Connected</b><br>${account}
@@ -107,37 +109,34 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   function resetUI(){
+    connectBtn.style.display = "inline-block";
+    disconnectBtn.style.display = "none";
     connectBtn.innerText = "Connect Wallet";
-    connectBtn.classList.remove("hidden");
-    disconnectBtn.classList.add("hidden");
     addr.innerText = "";
     list.innerHTML = "";
-    localStorage.removeItem("connectedWallet");
+    localStorage.removeItem("wallet");
   }
 
-  // AUTO RECONNECT
-  if (window.ethereum && currentAccount) {
-    setConnectedUI(currentAccount);
-  }
+  // auto reconnect
+  const saved = localStorage.getItem("wallet");
+  if(saved) setConnected(saved);
 
   // CONNECT
   connectBtn.onclick = async () => {
-    if (!window.ethereum) return alert("Install MetaMask first!");
+    if(!window.ethereum) return alert("Install MetaMask");
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const accounts = await provider.send("eth_requestAccounts", []);
-    currentAccount = accounts[0];
-    localStorage.setItem("connectedWallet", currentAccount);
-    setConnectedUI(currentAccount);
+    const acc = (await provider.send("eth_requestAccounts", []))[0];
+    localStorage.setItem("wallet", acc);
+    setConnected(acc);
   };
 
   // DISCONNECT
-  disconnectBtn.onclick = () => {
-    resetUI();
-  };
+  disconnectBtn.onclick = resetUI;
 
 });
 </script>
+
 
 
 
