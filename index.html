@@ -71,22 +71,33 @@ Advanced terminal for flipping and trading domain assets.</p>
 
 <footer class="text-center py-8 text-sm text-slate-500">© 2025 Domafi.xyz – DomainFi Bank</footer>
 <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+
 <script>
-document.getElementById("connectBtn").onclick = async () => {
-if (!window.ethereum) return alert("Install Metamask");
-const provider = new ethers.providers.Web3Provider(window.ethereum);
-const accounts = await provider.send("eth_requestAccounts", []);
-const address = accounts[0];
-document.getElementById("walletAddress").innerText =
-address.slice(0,6)+"..."+address.slice(-4);
-  document.getElementById("connectBtn").innerText = "Connected";
-  document.getElementById("domainList").innerHTML = `
+const btn = document.getElementById("connectBtn");
+const addrLabel = document.getElementById("walletAddress");
+const domainBox = document.getElementById("domainList");
+
+btn.addEventListener("click", async () => {
+  if (!window.ethereum) {
+    alert("Please install MetaMask first.");
+    return;
+  }
+
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const accounts = await provider.send("eth_requestAccounts", []);
+  const user = accounts[0];
+
+  btn.innerText = "Connected";
+  addrLabel.innerText = user.slice(0,6) + "..." + user.slice(-4);
+
+  domainBox.innerHTML = `
     <div class="bg-white p-4 rounded-xl shadow">
-      Connected wallet detected.<br>
-      Domain NFTs will appear here.
+      Wallet connected successfully.<br>
+      Domain NFTs will appear here once contract is linked.
     </div>`;
-};
+});
 </script>
+
 
 
 </body>
