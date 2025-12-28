@@ -78,30 +78,44 @@ Connect Wallet
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+
 <script>
-window.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
+
   const btn = document.getElementById("connectBtn");
   const addr = document.getElementById("walletAddress");
-  const box  = document.getElementById("domainList");
+  const list = document.getElementById("domainList");
+
+  if (!btn) return;
 
   btn.onclick = async () => {
-    if (!window.ethereum) return alert("Install MetaMask");
+    try {
+      if (typeof window.ethereum === "undefined") {
+        alert("Please install MetaMask first.");
+        return;
+      }
 
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const accounts = await provider.send("eth_requestAccounts", []);
-    const user = accounts[0];
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const accounts = await provider.send("eth_requestAccounts", []);
+      const user = accounts[0];
 
-    btn.innerText = "Connected";
-    addr.innerText = user.slice(0,6) + "..." + user.slice(-4);
+      btn.innerText = "Connected";
+      addr.innerText = user.slice(0,6)+"..."+user.slice(-4);
 
-    box.innerHTML = `
-      <div class="bg-white p-4 rounded-xl shadow">
-        Wallet connected successfully.<br>
-        Domain NFTs will appear here after contract integration.
-      </div>`;
+      list.innerHTML = `
+        <div class="bg-white p-4 rounded-xl shadow">
+          <b>Wallet Connected</b><br>
+          ${user}
+        </div>`;
+    } catch (err) {
+      alert("Wallet connection failed.");
+      console.error(err);
+    }
   };
+
 });
 </script>
+
 
 </body>
 </html>
