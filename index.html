@@ -21,6 +21,7 @@
   Connect Wallet
 </button>
 <span id="walletAddress" class="ml-4 text-xs text-slate-500"></span>
+<div id="balances" class="text-xs text-slate-600 mt-1"></div>
 </div>
 </header>
 <section class="max-w-7xl mx-auto px-6 py-24 text-center">
@@ -57,27 +58,36 @@
 <p>Launch fractionalized premium domains to the community.</p>
 </section>
 <footer class="text-center py-8 text-sm text-slate-500">© 2025 Domafi.xyz – DomainFi Bank</footer>
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
 <script>
 async function connectWallet() {
-  if (window.ethereum) {
-    const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-    const addr = accounts[0];
-    document.getElementById("walletAddress").innerText =
-      addr.slice(0, 6) + "..." + addr.slice(-4);
-    document.getElementById("connectBtn").innerText = "Connected";
-  } 
-  else if (window.solana) {
-    const resp = await window.solana.connect();
-    document.getElementById("walletAddress").innerText =
-      resp.publicKey.toString().slice(0, 6) + "...";
-    document.getElementById("connectBtn").innerText = "Connected";
-  } 
-  else {
-    alert("Install Metamask or Phantom Wallet");
-  }
-}
+  if (!window.ethereum) return alert("Install Metamask");
 
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const accounts = await provider.send("eth_requestAccounts", []);
+  const address = accounts[0];
+
+  document.getElementById("walletAddress").innerText =
+    address.slice(0, 6) + "..." + address.slice(-4);
+
+  document.getElementById("connectBtn").innerText = "Connected";
+
+  // Native balance (ETH)
+  const ethBalance = await provider.getBalance(address);
+  const eth = ethers.utils.formatEther(ethBalance);
+
+  // USDC balance (Base)
+  const usdcAddress = "0x833589fCD6EDB6E08f4c7C32D4f71b54bdA02913";
+  const usdcAbi = ["function balanceOf(address) view returns (uint256)", "function decimals() view returns (uint8)"];
+  const usdc = new ethers.Contract(usdcAddress, usdcAbi, provider);
+  const usdcBal = await usdc.balanceOf(address);
+  const decimals = await usdc.decimals();
+
+  document.getElementById("balances").innerHTML =
+    `ETH: ${parseFloat(eth).toFixed(4)}<br>USDC: ${(usdcBal / (10 ** decimals)).toFixed(2)}`;
+}
 document.getElementById("connectBtn").onclick = connectWallet;
 </script>
+
 </body>
 </html>
