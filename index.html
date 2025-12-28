@@ -86,38 +86,59 @@ Disconnect
 <script src="https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
 
-  var btn  = document.getElementById("connectBtn");
-  var addr = document.getElementById("walletAddress");
-  var list = document.getElementById("domainList");
+  const connectBtn = document.getElementById("connectBtn");
+  const disconnectBtn = document.getElementById("disconnectBtn");
+  const addr = document.getElementById("walletAddress");
+  const list = document.getElementById("domainList");
 
-  btn.onclick = async function () {
-    try {
-      if (!window.ethereum) {
-        alert("Please install MetaMask");
-        return;
-      }
+  let currentAccount = localStorage.getItem("connectedWallet");
 
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const accounts = await provider.send("eth_requestAccounts", []);
-      const user = accounts[0];
+  function setConnectedUI(account){
+    connectBtn.innerText = "Connected";
+    connectBtn.classList.add("hidden");
+    disconnectBtn.classList.remove("hidden");
+    addr.innerText = account.slice(0,6) + "..." + account.slice(-4);
+    list.innerHTML = `
+      <div class="bg-white p-4 rounded-xl shadow">
+        <b>Wallet Connected</b><br>${account}
+      </div>`;
+  }
 
-      btn.innerText = "Connected";
-      addr.innerText = user.substring(0,6) + "..." + user.substring(user.length - 4);
+  function resetUI(){
+    connectBtn.innerText = "Connect Wallet";
+    connectBtn.classList.remove("hidden");
+    disconnectBtn.classList.add("hidden");
+    addr.innerText = "";
+    list.innerHTML = "";
+    localStorage.removeItem("connectedWallet");
+  }
 
-      list.innerHTML =
-        '<div class="bg-white p-4 rounded-xl shadow">' +
-        '<b>Wallet Connected</b><br>' + user +
-        '</div>';
+  // AUTO RECONNECT
+  if (window.ethereum && currentAccount) {
+    setConnectedUI(currentAccount);
+  }
 
-    } catch (e) {
-      console.error(e);
-      alert("Wallet connection failed");
-    }
+  // CONNECT
+  connectBtn.onclick = async () => {
+    if (!window.ethereum) return alert("Install MetaMask first!");
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const accounts = await provider.send("eth_requestAccounts", []);
+    currentAccount = accounts[0];
+    localStorage.setItem("connectedWallet", currentAccount);
+    setConnectedUI(currentAccount);
   };
+
+  // DISCONNECT
+  disconnectBtn.onclick = () => {
+    resetUI();
+  };
+
 });
 </script>
+
 
 
 
