@@ -50,7 +50,11 @@
 <section id="trade" class="bg-white py-16">
 <div class="max-w-7xl mx-auto px-6">
 <h2 class="text-2xl font-bold mb-6">Trade Terminal</h2>
-<p>Advanced terminal for flipping and trading domain assets.</p>
+<p><section id="mydomains" class="max-w-7xl mx-auto px-6 py-16">
+  <h2 class="text-2xl font-bold mb-4">My Domain Tokens</h2>
+  <div id="domainList" class="grid md:grid-cols-3 gap-6"></div>
+</section>
+Advanced terminal for flipping and trading domain assets.</p>
 </div>
 </section>
 <section id="launchpad" class="max-w-7xl mx-auto px-6 py-16">
@@ -59,7 +63,10 @@
 </section>
 <footer class="text-center py-8 text-sm text-slate-500">© 2025 Domafi.xyz – DomainFi Bank</footer>
 <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
 <script>
+const DOMAIN_CONTRACT = "0x0000000000000000000000000000000000000000"; // ganti nanti
+
 async function connectWallet() {
   if (!window.ethereum) return alert("Install Metamask");
 
@@ -69,25 +76,39 @@ async function connectWallet() {
 
   document.getElementById("walletAddress").innerText =
     address.slice(0, 6) + "..." + address.slice(-4);
-
   document.getElementById("connectBtn").innerText = "Connected";
 
-  // Native balance (ETH)
-  const ethBalance = await provider.getBalance(address);
-  const eth = ethers.utils.formatEther(ethBalance);
-
-  // USDC balance (Base)
-  const usdcAddress = "0x833589fCD6EDB6E08f4c7C32D4f71b54bdA02913";
-  const usdcAbi = ["function balanceOf(address) view returns (uint256)", "function decimals() view returns (uint8)"];
-  const usdc = new ethers.Contract(usdcAddress, usdcAbi, provider);
-  const usdcBal = await usdc.balanceOf(address);
-  const decimals = await usdc.decimals();
-
-  document.getElementById("balances").innerHTML =
-    `ETH: ${parseFloat(eth).toFixed(4)}<br>USDC: ${(usdcBal / (10 ** decimals)).toFixed(2)}`;
+  await loadDomains(address, provider);
 }
+
+async function loadDomains(user, provider) {
+  const abi = [
+    "function balanceOf(address) view returns (uint256)",
+    "function tokenOfOwnerByIndex(address,uint256) view returns (uint256)",
+    "function tokenURI(uint256) view returns (string)"
+  ];
+
+  const contract = new ethers.Contract(DOMAIN_CONTRACT, abi, provider);
+  const count = await contract.balanceOf(user);
+
+  document.getElementById("domainList").innerHTML = "";
+
+  for (let i = 0; i < count; i++) {
+    const tokenId = await contract.tokenOfOwnerByIndex(user, i);
+    const uri = await contract.tokenURI(tokenId);
+    const name = uri.split("/").pop();
+
+    document.getElementById("domainList").innerHTML += `
+      <div class="bg-white p-4 rounded-xl shadow">
+        <b>${name}</b><br>
+        Token ID: ${tokenId}
+      </div>`;
+  }
+}
+
 document.getElementById("connectBtn").onclick = connectWallet;
 </script>
+
 
 </body>
 </html>
