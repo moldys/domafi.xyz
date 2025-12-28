@@ -18,7 +18,7 @@
 <a href="#launchpad">Launchpad</a>
 </nav>
 <button id="connectBtn" class="bg-blue-600 text-white px-4 py-2 rounded-xl">
-  Connect Wallet
+Connect Wallet
 </button>
 <span id="walletAddress" class="ml-4 text-xs text-slate-500"></span>
 <div id="balances" class="text-xs text-slate-600 mt-1"></div>
@@ -53,14 +53,14 @@ Advanced terminal for flipping and trading domain assets.</p>
 <section id="launchpad" class="max-w-7xl mx-auto px-6 py-16">
 <h2 class="text-2xl font-bold mb-6">Domain Launchpad</h2>
 <p>Launch fract<section id="trade" class="bg-white py-16">
-  <div class="max-w-7xl mx-auto px-6">
-    <h2 class="text-2xl font-bold mb-6">Trade Terminal</h2>
-    <p>Advanced terminal for flipping and trading domain assets.</p>
-  </div>
+<div class="max-w-7xl mx-auto px-6">
+<h2 class="text-2xl font-bold mb-6">Trade Terminal</h2>
+<p>Advanced terminal for flipping and trading domain assets.</p>
+</div>
 </section>
 <section id="mydomains" class="max-w-7xl mx-auto px-6 py-16">
-  <h2 class="text-2xl font-bold mb-4">My Domain Tokens</h2>
-  <div id="domainList" class="grid md:grid-cols-3 gap-6"></div>
+<h2 class="text-2xl font-bold mb-4">My Domain Tokens</h2>
+<div id="domainList" class="grid md:grid-cols-3 gap-6"></div>
 </section>
 ionalized premium domains to the community.</p>
 </section>
@@ -68,16 +68,13 @@ ionalized premium domains to the community.</p>
 <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
 <script>
 document.getElementById("connectBtn").onclick = async () => {
-  if (!window.ethereum) return alert("Install Metamask");
-
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
-  const accounts = await provider.send("eth_requestAccounts", []);
-  const address = accounts[0];
-
-  document.getElementById("walletAddress").innerText =
-    address.slice(0,6)+"..."+address.slice(-4);
+if (!window.ethereum) return alert("Install Metamask");
+const provider = new ethers.providers.Web3Provider(window.ethereum);
+const accounts = await provider.send("eth_requestAccounts", []);
+const address = accounts[0];
+document.getElementById("walletAddress").innerText =
+address.slice(0,6)+"..."+address.slice(-4);
   document.getElementById("connectBtn").innerText = "Connected";
-
   document.getElementById("domainList").innerHTML = `
     <div class="bg-white p-4 rounded-xl shadow">
       Connected wallet detected.<br>
