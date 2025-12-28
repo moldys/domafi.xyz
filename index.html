@@ -80,17 +80,15 @@ Connect Wallet
 <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("DOMContentLoaded", () => {
 
-  const btn = document.getElementById("connectBtn");
+  const btn  = document.getElementById("connectBtn");
   const addr = document.getElementById("walletAddress");
   const list = document.getElementById("domainList");
 
-  if (!btn) return;
-
-  btn.onclick = async () => {
+  btn.addEventListener("click", async () => {
     try {
-      if (typeof window.ethereum === "undefined") {
+      if (!window.ethereum) {
         alert("Please install MetaMask first.");
         return;
       }
@@ -104,17 +102,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
       list.innerHTML = `
         <div class="bg-white p-4 rounded-xl shadow">
-          <b>Wallet Connected</b><br>
-          ${user}
+          <b>Wallet Connected</b><br>${user}
         </div>`;
-    } catch (err) {
-      alert("Wallet connection failed.");
-      console.error(err);
-    }
-  };
 
-}
+    } catch (err) {
+      console.error(err);
+      alert("Wallet connection failed.");
+    }
+  });
+
+});
 </script>
+
 
 
 </body>
