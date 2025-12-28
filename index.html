@@ -6,10 +6,13 @@
 <title>Domafi.xyz – The DomainFi Bank</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-slate-50 text-slate-800">
+
 <header class="bg-white shadow">
 <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
 <img src="logo.png" class="h-10 md:h-12" alt="Domafi">
+
 <nav class="space-x-6 text-sm">
 <a href="#vault">Vault</a>
 <a href="#borrow">Borrow</a>
@@ -17,88 +20,88 @@
 <a href="#trade">Trade</a>
 <a href="#launchpad">Launchpad</a>
 </nav>
+
 <button id="connectBtn" class="bg-blue-600 text-white px-4 py-2 rounded-xl">
 Connect Wallet
 </button>
-<span id="walletAddress" class="ml-4 text-xs text-slate-500"></span>
-<div id="balances" class="text-xs text-slate-600 mt-1"></div>
+<span id="walletAddress" class="ml-3 text-xs text-slate-500"></span>
 </div>
 </header>
+
 <section class="max-w-7xl mx-auto px-6 py-24 text-center">
 <h1 class="text-5xl font-bold mb-4">The DomainFi Bank</h1>
-<p class="text-slate-600 mb-8">Store, stake, borrow and trade tokenized domains on Doma Network.</p> <p class="text-sm text-blue-500 mb-8">Built on Doma Protocol</p>
+<p class="text-slate-600 mb-8">Store, stake, borrow and trade tokenized domains on Doma Network.</p>
+<p class="text-sm text-blue-500 mb-8">Built on Doma Protocol</p>
 <a href="#vault" class="bg-blue-600 text-white px-8 py-4 rounded-xl">Enter Domafi</a>
 </section>
+
 <section id="vault" class="max-w-7xl mx-auto px-6 py-16">
 <h2 class="text-2xl font-bold mb-6">Domain Vault</h2>
 <div class="grid md:grid-cols-3 gap-6">
-<div class="bg-white p-6 rounded-xl shadow">Deposit Domains<br/>Earn yield</div>
+<div class="bg-white p-6 rounded-xl shadow">Deposit Domains<br>Earn yield</div>
 <div class="bg-white p-6 rounded-xl shadow">Secure On-chain Storage</div>
 <div class="bg-white p-6 rounded-xl shadow">Withdraw Anytime</div>
 </div>
 </section>
+
 <section id="borrow" class="bg-white py-16">
 <div class="max-w-7xl mx-auto px-6">
 <h2 class="text-2xl font-bold mb-6">Borrow Against Domains</h2>
 <p>Use your domains as collateral to borrow USDC.</p>
 </div>
 </section>
+
 <section id="stake" class="max-w-7xl mx-auto px-6 py-16">
 <h2 class="text-2xl font-bold mb-6">Stake Domains</h2>
 <p>Stake your domain tokens and earn protocol yield.</p>
 </section>
-Advanced terminal for flipping and trading domain assets.</p>
-</div>
-</section>
-<section id="launchpad" class="max-w-7xl mx-auto px-6 py-16">
-<h2 class="text-2xl font-bold mb-6">Domain Launchpad</h2>
+
 <section id="trade" class="bg-white py-16">
-  <div class="max-w-7xl mx-auto px-6">
-    <h2 class="text-2xl font-bold mb-6">Trade Terminal</h2>
-    <p>Advanced terminal for flipping and trading domain assets.</p>
-  </div>
+<div class="max-w-7xl mx-auto px-6">
+<h2 class="text-2xl font-bold mb-6">Trade Terminal</h2>
+<p>Advanced terminal for flipping and trading domain assets.</p>
+</div>
 </section>
 
 <section id="mydomains" class="max-w-7xl mx-auto px-6 py-16">
-  <h2 class="text-2xl font-bold mb-4">My Domain Tokens</h2>
-  <div id="domainList" class="grid md:grid-cols-3 gap-6"></div>
+<h2 class="text-2xl font-bold mb-4">My Domain Tokens</h2>
+<div id="domainList" class="grid md:grid-cols-3 gap-6"></div>
 </section>
 
 <section id="launchpad" class="max-w-7xl mx-auto px-6 py-16">
-  <h2 class="text-2xl font-bold mb-6">Domain Launchpad</h2>
-  <p>Launch fractionalized premium domains to the community.</p>
+<h2 class="text-2xl font-bold mb-6">Domain Launchpad</h2>
+<p>Launch fractionalized premium domains to the community.</p>
 </section>
 
-<footer class="text-center py-8 text-sm text-slate-500">© 2025 Domafi.xyz – DomainFi Bank</footer>
+<footer class="text-center py-8 text-sm text-slate-500">
+© 2025 Domafi.xyz – DomainFi Bank
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
-
 <script>
-const btn = document.getElementById("connectBtn");
-const addrLabel = document.getElementById("walletAddress");
-const domainBox = document.getElementById("domainList");
+window.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("connectBtn");
+  const addr = document.getElementById("walletAddress");
+  const box  = document.getElementById("domainList");
 
-btn.addEventListener("click", async () => {
-  if (!window.ethereum) {
-    alert("Please install MetaMask first.");
-    return;
-  }
+  btn.onclick = async () => {
+    if (!window.ethereum) return alert("Install MetaMask");
 
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
-  const accounts = await provider.send("eth_requestAccounts", []);
-  const user = accounts[0];
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const accounts = await provider.send("eth_requestAccounts", []);
+    const user = accounts[0];
 
-  btn.innerText = "Connected";
-  addrLabel.innerText = user.slice(0,6) + "..." + user.slice(-4);
+    btn.innerText = "Connected";
+    addr.innerText = user.slice(0,6) + "..." + user.slice(-4);
 
-  domainBox.innerHTML = `
-    <div class="bg-white p-4 rounded-xl shadow">
-      Wallet connected successfully.<br>
-      Domain NFTs will appear here once contract is linked.
-    </div>`;
+    box.innerHTML = `
+      <div class="bg-white p-4 rounded-xl shadow">
+        Wallet connected successfully.<br>
+        Domain NFTs will appear here after contract integration.
+      </div>`;
+  };
 });
 </script>
-
-
 
 </body>
 </html>
