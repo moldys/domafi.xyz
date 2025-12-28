@@ -92,56 +92,76 @@ Disconnect
 © 2025 Domafi.xyz – DomainFi Bank
 </footer>
 
-<script src="https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+const connectBtn = document.getElementById("connectBtn");
+const disconnectBtn = document.getElementById("disconnectBtn");
+const addr = document.getElementById("walletAddress");
+const vault = document.getElementById("fakeVault");
+const fakeDomains = document.getElementById("fakeDomains");
 
-  const connectBtn = document.getElementById("connectBtn");
-  const disconnectBtn = document.getElementById("disconnectBtn");
-  const addr = document.getElementById("walletAddress");
-  const list = document.getElementById("domainList");
-
-  function setConnected(account){
-    connectBtn.style.display = "none";
-    disconnectBtn.style.display = "inline-block";
-    connectBtn.innerText = "Connected";
-    addr.innerText = account.slice(0,6)+"..."+account.slice(-4);
-
-    list.innerHTML = `
-      <div class="bg-white p-4 rounded-xl shadow">
-        <b>Wallet Connected</b><br>${account}
-      </div>`;
-  }
-
-  function resetUI(){
-    connectBtn.style.display = "inline-block";
-    disconnectBtn.style.display = "none";
-    connectBtn.innerText = "Connect Wallet";
-    addr.innerText = "";
-    list.innerHTML = "";
-    localStorage.removeItem("wallet");
-  }
-
-  // auto reconnect
-  const saved = localStorage.getItem("wallet");
-  if(saved) setConnected(saved);
-
-  // CONNECT
-  connectBtn.onclick = async () => {
-    if(!window.ethereum) return alert("Install MetaMask");
-
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const acc = (await provider.send("eth_requestAccounts", []))[0];
-    localStorage.setItem("wallet", acc);
-    setConnected(acc);
+function genVault(address){
+  let seed = parseInt(address.slice(2,6),16);
+  return {
+    balance: seed * 81,
+    apy: 35 + (seed % 20),
+    yield: seed * 4,
+    domains: [
+      address.slice(2,6)+".xyz",
+      "rollbridge.xyz",
+      "bruh.hightech.xyz",
+      "domafi.xyz"
+    ]
   };
+}
 
-  // DISCONNECT
-  disconnectBtn.onclick = resetUI;
+function renderVault(v){
+  document.getElementById("fakeBalance").innerText = v.balance + " DOMA";
+  document.getElementById("fakeAPY").innerText = v.apy + "%";
+  document.getElementById("fakeYield").innerText = "+" + v.yield + " DOMA";
+  document.getElementById("fakeCount").innerText = v.domains.length;
 
-});
+  fakeDomains.innerHTML = "";
+  v.domains.forEach(d=>{
+    fakeDomains.innerHTML += `
+      <div class="bg-white p-4 rounded-xl shadow">
+        <b>${d}</b><br>
+        <span class="text-xs text-slate-400">Vault Locked</span>
+      </div>`;
+  });
+}
+
+connectBtn.onclick = async () => {
+  if(!window.ethereum) return alert("Install MetaMask");
+
+  const accounts = await ethereum.request({method:"eth_requestAccounts"});
+  const user = accounts[0];
+
+  const data = genVault(user);
+  localStorage.setItem("domafi_user",user);
+  localStorage.setItem("domafi_vault",JSON.stringify(data));
+
+  addr.innerText = user.slice(0,6)+"..."+user.slice(-4);
+  connectBtn.style.display="none";
+  disconnectBtn.style.display="inline-block";
+  vault.classList.remove("hidden");
+  renderVault(data);
+};
+
+disconnectBtn.onclick = () => {
+  localStorage.clear();
+  location.reload();
+};
+
+const saved = localStorage.getItem("domafi_user");
+if(saved){
+  addr.innerText = saved.slice(0,6)+"..."+saved.slice(-4);
+  connectBtn.style.display="none";
+  disconnectBtn.style.display="inline-block";
+  vault.classList.remove("hidden");
+  renderVault(JSON.parse(localStorage.getItem("domafi_vault")));
+}
 </script>
+
 
 
 
