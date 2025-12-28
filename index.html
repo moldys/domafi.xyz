@@ -80,20 +80,16 @@ Connect Wallet
 <script src="https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 
 <script>
-window.addEventListener("DOMContentLoaded", () => {
-   ...
-});
-</script>
+document.addEventListener("DOMContentLoaded", function () {
 
+  var btn  = document.getElementById("connectBtn");
+  var addr = document.getElementById("walletAddress");
+  var list = document.getElementById("domainList");
 
-  const btn  = document.getElementById("connectBtn");
-  const addr = document.getElementById("walletAddress");
-  const list = document.getElementById("domainList");
-
-  btn.addEventListener("click", async () => {
+  btn.onclick = async function () {
     try {
       if (!window.ethereum) {
-        alert("Please install MetaMask first.");
+        alert("Please install MetaMask");
         return;
       }
 
@@ -102,21 +98,21 @@ window.addEventListener("DOMContentLoaded", () => {
       const user = accounts[0];
 
       btn.innerText = "Connected";
-      addr.innerText = user.slice(0,6)+"..."+user.slice(-4);
+      addr.innerText = user.substring(0,6) + "..." + user.substring(user.length - 4);
 
-      list.innerHTML = `
-        <div class="bg-white p-4 rounded-xl shadow">
-          <b>Wallet Connected</b><br>${user}
-        </div>`;
+      list.innerHTML =
+        '<div class="bg-white p-4 rounded-xl shadow">' +
+        '<b>Wallet Connected</b><br>' + user +
+        '</div>';
 
-    } catch (err) {
-      console.error(err);
-      alert("Wallet connection failed.");
+    } catch (e) {
+      console.error(e);
+      alert("Wallet connection failed");
     }
-  });
-
+  };
 });
 </script>
+
 
 
 
