@@ -93,6 +93,32 @@ Disconnect
 </footer>
 
 <script src="https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+<script>
+let VAULT = {
+  usdc: 12500,
+  borrowed: 3200,
+  domains: [
+    { name: "bruh.xyz", value: 1800 },
+    { name: "domafi.xyz", value: 4500 },
+    { name: "rekt.xyz", value: 900 }
+  ]
+};
+</script>
+<script>
+function renderVault(){
+  document.getElementById("vaultUSDC").innerText = "$" + VAULT.usdc;
+  document.getElementById("vaultBorrowed").innerText = "$" + VAULT.borrowed;
+
+  let html = "";
+  VAULT.domains.forEach(d=>{
+    html += `<div class="bg-white p-4 rounded-xl shadow">
+      <b>${d.name}</b><br>Collateral Value: $${d.value}
+    </div>`;
+  });
+
+  document.getElementById("vaultDomains").innerHTML = html;
+}
+</script>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
