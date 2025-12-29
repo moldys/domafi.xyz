@@ -3,162 +3,125 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Domafi.xyz – The DomainFi Bank</title>
+<title>Domafi.xyz – DomainFi Bank</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
-
 <body class="bg-slate-50 text-slate-800">
 
 <header class="bg-white shadow">
 <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-<img src="logo.png" class="h-10 md:h-12" alt="Domafi">
-
+<img src="logo.png" class="h-10 md:h-12">
 <nav class="space-x-6 text-sm">
 <a href="#vault">Vault</a>
-<a href="#borrow">Borrow</a>
-<a href="#stake">Stake</a>
 <a href="#trade">Trade</a>
-<a href="#launchpad">Launchpad</a>
+<a href="#stake">Stake</a>
 </nav>
-
-<button id="connectBtn" class="bg-blue-600 text-white px-4 py-2 rounded-xl">
-Connect Wallet
-</button>
-
-<button id="disconnectBtn"
- style="display:none"
- class="bg-red-500 text-white px-4 py-2 rounded-xl ml-2">
-Disconnect
-</button>
-
+<div>
+<button id="connectBtn" class="bg-blue-600 text-white px-4 py-2 rounded-xl">Connect Wallet</button>
+<button id="disconnectBtn" style="display:none" class="bg-red-500 text-white px-4 py-2 rounded-xl ml-2">Disconnect</button>
 <span id="walletAddress" class="ml-3 text-xs text-slate-500"></span>
-
-
+</div>
 </div>
 </header>
 
 <section class="max-w-7xl mx-auto px-6 py-24 text-center">
 <h1 class="text-5xl font-bold mb-4">The DomainFi Bank</h1>
-<p class="text-slate-600 mb-8">Store, stake, borrow and trade tokenized domains on Doma Network.</p>
-<p class="text-sm text-blue-500 mb-8">Built on Doma Protocol</p>
+<p class="text-slate-600 mb-8">Stake, trade and vault domain tokens.</p>
 <a href="#vault" class="bg-blue-600 text-white px-8 py-4 rounded-xl">Enter Domafi</a>
 </section>
 
-<section id="fakeVault" class="max-w-7xl mx-auto px-6 py-16">
+<section id="vault" class="max-w-7xl mx-auto px-6 py-16 hidden">
 <h2 class="text-2xl font-bold mb-6">My Vault</h2>
-
 <div class="grid md:grid-cols-3 gap-6 mb-8">
-  <div class="bg-white p-6 rounded-xl shadow">USDC Balance<br><b id="vaultUSDC"></b></div>
-  <div class="bg-white p-6 rounded-xl shadow">Borrowed<br><b id="vaultBorrowed"></b></div>
-  <div class="bg-white p-6 rounded-xl shadow">Domains<br><b id="vaultCount"></b></div>
+<div class="bg-white p-6 rounded-xl shadow">USDC<br><b id="vaultUSDC"></b></div>
+<div class="bg-white p-6 rounded-xl shadow">Borrowed<br><b id="vaultBorrowed"></b></div>
+<div class="bg-white p-6 rounded-xl shadow">Domains<br><b id="vaultCount"></b></div>
 </div>
-
-<h3 class="font-bold mb-3">My Domains</h3>
 <div id="vaultDomains" class="grid md:grid-cols-3 gap-6"></div>
 </section>
 
-
-<section id="launchpad" class="max-w-7xl mx-auto px-6 py-16">
-<h2 class="text-2xl font-bold mb-6">Domain Launchpad</h2>
-<p>Launch fractionalized premium domains to the community.</p>
+<section id="trade" class="bg-white py-16 hidden">
+<div class="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-6">
+<div class="bg-slate-50 rounded-xl p-4 shadow"><h3 class="font-bold mb-2">Order Book</h3><div id="orderBook"></div></div>
+<div class="bg-slate-50 rounded-xl p-4 shadow"><h3 class="font-bold mb-2">DOMA / USDC</h3><canvas id="priceChart"></canvas></div>
+<div class="bg-slate-50 rounded-xl p-4 shadow">
+<h3 class="font-bold mb-2">Trade</h3>
+<input id="tradeAmount" class="border p-2 w-full mb-2 rounded" placeholder="Amount">
+<button onclick="buy()" class="bg-green-500 text-white w-full p-2 rounded mb-2">BUY</button>
+<button onclick="sell()" class="bg-red-500 text-white w-full p-2 rounded">SELL</button>
+<div id="tradeBalance" class="text-xs mt-2 text-slate-500"></div>
+</div>
+</div>
 </section>
 
-<footer class="text-center py-8 text-sm text-slate-500">
-© 2025 Domafi.xyz – DomainFi Bank
-</footer>
+<section id="stake" class="bg-slate-50 py-16 hidden">
+<div class="max-w-4xl mx-auto px-6">
+<h2 class="text-2xl font-bold mb-6">Stake DOMA</h2>
+<div class="grid md:grid-cols-3 gap-6 mb-8">
+<div class="bg-white p-6 rounded-xl shadow">Staked<br><b id="stakedAmount">0</b></div>
+<div class="bg-white p-6 rounded-xl shadow">APY<br><b>42%</b></div>
+<div class="bg-white p-6 rounded-xl shadow">Reward<br><b id="pendingReward">0</b></div>
+</div>
+<input id="stakeInput" class="border p-2 rounded w-full mb-2" placeholder="Amount">
+<button onclick="stake()" class="bg-blue-600 text-white w-full p-2 rounded mb-2">Stake</button>
+<button onclick="unstake()" class="bg-red-500 text-white w-full p-2 rounded mb-2">Unstake</button>
+<button onclick="claim()" class="bg-green-500 text-white w-full p-2 rounded">Claim</button>
+</div>
+</section>
 
-<script src="https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+<footer class="text-center py-8 text-sm text-slate-500">© 2025 Domafi.xyz</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
-let VAULT = {
-  usdc: 12500,
-  borrowed: 3200,
-  domains: [
-    { name: "bruh.xyz", value: 1800 },
-    { name: "domafi.xyz", value: 4500 },
-    { name: "rekt.xyz", value: 900 }
-  ]
-};
-</script>
-<script>
+let VAULT={usdc:12000,borrowed:3000,domains:[{name:"domafi.xyz",value:4000},{name:"bruh.xyz",value:1200},{name:"rekt.xyz",value:800}]};
+let PRICE=1.12, TOKENS=300, USDC=800, STAKED=0, REWARD=0;
+
 function renderVault(){
-  document.getElementById("vaultUSDC").innerText = "$" + VAULT.usdc;
-  document.getElementById("vaultBorrowed").innerText = "$" + VAULT.borrowed;
-
-  let html = "";
-  VAULT.domains.forEach(d=>{
-    html += `<div class="bg-white p-4 rounded-xl shadow">
-      <b>${d.name}</b><br>Collateral Value: $${d.value}
-    </div>`;
-  });
-
-  document.getElementById("vaultDomains").innerHTML = html;
+vaultUSDC.innerText="$"+VAULT.usdc;
+vaultBorrowed.innerText="$"+VAULT.borrowed;
+vaultCount.innerText=VAULT.domains.length;
+vaultDomains.innerHTML=VAULT.domains.map(d=>`<div class="bg-white p-4 rounded-xl shadow"><b>${d.name}</b><br>$${d.value}</div>`).join("");
 }
-</script>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
+function updateTrade(){
+tradeBalance.innerHTML=`DOMA: ${TOKENS}<br>USDC: $${USDC.toFixed(2)}`;
+orderBook.innerHTML=[...Array(6)].map(()=>`<div class="flex justify-between text-xs"><span>${(Math.random()*500).toFixed(0)}</span><span>$${(PRICE+(Math.random()-0.5)*0.05).toFixed(3)}</span></div>`).join("");
+}
 
-  const connectBtn = document.getElementById("connectBtn");
-  const disconnectBtn = document.getElementById("disconnectBtn");
-  const addr = document.getElementById("walletAddress");
-  const list = document.getElementById("domainList");
+function buy(){let a=+tradeAmount.value,c=a*PRICE;if(c>USDC) return alert("No USDC");USDC-=c;TOKENS+=a;updateTrade();}
+function sell(){let a=+tradeAmount.value;if(a>TOKENS) return alert("No DOMA");TOKENS-=a;USDC+=a*PRICE;updateTrade();}
 
-  function setConnected(account){
-    connectBtn.style.display = "none";
-    disconnectBtn.style.display = "inline-block";
-    connectBtn.innerText = "Connected";
-    addr.innerText = account.slice(0,6)+"..."+account.slice(-4);
+function stake(){let a=+stakeInput.value;if(a>TOKENS) return alert("No DOMA");TOKENS-=a;STAKED+=a;renderStake();updateTrade();}
+function unstake(){TOKENS+=STAKED;STAKED=0;REWARD=0;renderStake();updateTrade();}
+function claim(){TOKENS+=REWARD;REWARD=0;renderStake();updateTrade();}
+function renderStake(){stakedAmount.innerText=STAKED.toFixed(2);pendingReward.innerText=REWARD.toFixed(2);}
 
-    localStorage.setItem("wallet", account);
+setInterval(()=>{if(STAKED>0){REWARD+=STAKED*0.001;renderStake();}},2000);
 
-    list.innerHTML = `
-      <div class="bg-white p-4 rounded-xl shadow">
-        <b>Vault Active</b><br>
-        Wallet: ${account}<br>
-        Domains Stored: 3<br>
-        Yield: 2.3% APR
-      </div>
-    `;
-  }
+document.addEventListener("DOMContentLoaded",()=>{
+const ctx=priceChart.getContext("2d");
+let prices=[1.1,1.12,1.13,1.15,1.14];
+const chart=new Chart(ctx,{type:"line",data:{labels:["1","2","3","4","5"],datasets:[{label:"DOMA",data:prices,borderColor:"#2563eb"}]}});
+setInterval(()=>{PRICE+=(Math.random()-0.5)*0.02;prices.push(PRICE.toFixed(3));prices.shift();chart.data.datasets[0].data=prices;chart.update();},2000);
 
-  function resetUI(){
-    connectBtn.style.display = "inline-block";
-    disconnectBtn.style.display = "none";
-    connectBtn.innerText = "Connect Wallet";
-    addr.innerText = "";
-    list.innerHTML = "";
-    localStorage.removeItem("wallet");
-  }
+function showUI(a){
+walletAddress.innerText=a.slice(0,6)+"..."+a.slice(-4);
+connectBtn.style.display="none";disconnectBtn.style.display="inline-block";
+vault.classList.remove("hidden");trade.classList.remove("hidden");stake.classList.remove("hidden");
+renderVault();updateTrade();renderStake();localStorage.setItem("wallet",a);
+}
+function reset(){
+connectBtn.style.display="inline-block";disconnectBtn.style.display="none";walletAddress.innerText="";
+vault.classList.add("hidden");trade.classList.add("hidden");stake.classList.add("hidden");
+localStorage.removeItem("wallet");
+}
+connectBtn.onclick=async()=>{if(!window.ethereum) return alert("Install MetaMask");const a=(await ethereum.request({method:"eth_requestAccounts"}))[0];showUI(a);};
+disconnectBtn.onclick=reset;
 
-  connectBtn.onclick = async () => {
-    try{
-      if(!window.ethereum) return alert("Install MetaMask");
-
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const accounts = await provider.send("eth_requestAccounts", []);
-      setConnected(accounts[0]);
-renderVault();
-document.getElementById("vaultCount").innerText = VAULT.domains.length;
-document.getElementById("fakeVault").classList.remove("hidden");
-
-    }catch(e){ alert("Wallet rejected"); }
-  };
-
-  disconnectBtn.onclick = () => resetUI();
-
-  // Auto restore
-  const saved = localStorage.getItem("wallet");
-  if(saved) setConnected(saved);
-
+const saved=localStorage.getItem("wallet");if(saved) showUI(saved);
 });
 </script>
-
-
-
-
-
-
-
-
 </body>
 </html>
+
